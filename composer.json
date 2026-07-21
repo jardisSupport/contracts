@@ -1,0 +1,49 @@
+{
+    "name": "jardissupport/contracts",
+    "homepage": "https://jardis.io",
+    "description": "Consolidated contract interfaces for all Jardis packages — Kernel, Data, Repository, DbQuery, Messaging, Validation, Workflow, and more",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "Jardis Development",
+            "email": "jardisDev@headgent.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo": "*",
+        "psr/container": "^2.0",
+        "psr/simple-cache": "^3.0",
+        "psr/log": "^3.0",
+        "psr/event-dispatcher": "^1.0",
+        "psr/http-client": "^1.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "2.2.3",
+        "squizlabs/php_codesniffer": "3.13.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "JardisSupport\\Contract\\": "src/"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/jardisSupport/contracts/issues",
+        "docs": "https://docs.jardis.io/en/support/contracts",
+        "email": "jardisDev@headgent.com"
+    },
+    "keywords": [
+        "contracts",
+        "interfaces",
+        "ports",
+        "psr",
+        "php",
+        "domain-driven-design",
+        "hexagonal-architecture",
+        "jardissupport",
+        "headgent"
+    ]
+}
