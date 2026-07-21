@@ -1,4 +1,4 @@
-# Jardis Contract
+# Jardis Contracts
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
 [![PHP Version](https://img.shields.io/badge/PHP-%3E%3D8.2-777BB4.svg)](https://www.php.net/)
@@ -176,7 +176,7 @@ Replace composer dependency:
 
 Full documentation, guides, and API reference:
 
-**[docs.jardis.io/en/support/contract](https://docs.jardis.io/en/support/contract)**
+**[docs.jardis.io/en/support/contracts](https://docs.jardis.io/en/support/contracts)**
 
 ---
 
