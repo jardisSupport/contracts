@@ -1,7 +1,7 @@
 # DomainResponse Envelope Contract
 
 Transport-neutral specification of the JSON envelope every Jardis domain
-response is mapped into. It is fixed here, in `jardissupport/contract`, so
+response is mapped into. It is fixed here, in `jardissupport/contracts`, so
 that **any** transport layer — the reference `jardiscore/app` HTTP mapper,
 a hand-rolled CLI/worker adapter, or a third-party framework integration —
 can implement the same client-facing contract without importing
