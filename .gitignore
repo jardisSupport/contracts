@@ -1,6 +1,5 @@
 .DS_Store
 .idea/
-.claude/
 
 vendor/
 composer.lock
@@ -11,6 +10,9 @@ tests/reports/
 *.log
 /.env
 *.key
+.claude/CLAUDE.md
+.claude/settings.local.json
+.claude/cache/
 
 # docs/ wird lokal gehalten, nicht committet (inkl. Session-Handover-Doku)
 docs/
