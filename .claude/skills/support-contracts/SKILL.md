@@ -81,9 +81,8 @@ use JardisSupport\Contract\Auth\TokenType;          // string-backed
   `eventListenerRegistry(): ?EventListenerRegistryInterface`, the registration counterpart to
   `eventDispatcher()`. Without a registry, event routing simply stays inactive.
 - `GeneratedContextInterface` — deliberately **empty marker**. Every generated `{Domain}Context`
-  implements it, so the resolve path recognizes generated contexts via
-  `is_subclass_of($resolved, GeneratedContextInterface::class)` — no shared base class needed and
-  independent of domain boundaries. There is no `BoundedContextInterface` in this package.
+  implements it — no shared base class needed and independent of domain boundaries. There is no
+  `BoundedContextInterface` in this package.
 - `DomainResponseInterface` / `ContextResponseInterface` — the response vocabulary that generated
   domains and the delivery layer share.
 
