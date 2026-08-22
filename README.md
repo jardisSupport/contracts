@@ -93,7 +93,7 @@ here instead of from `jardiscore/kernel`.
 
 ### `DomainKernelInterface::eventListenerRegistry()`
 
-The Kernel interface (the "Koffer") gained an 11th accessor:
+The Kernel interface gained an 11th accessor:
 `eventListenerRegistry(): ?EventListenerRegistryInterface`. It is paired with
 `eventDispatcher()` — both are typically backed by the same underlying
 provider instance, one side for dispatching (PSR-14), one side for
@@ -162,8 +162,8 @@ Replace composer dependency:
 
 | Package | Role |
 |---------|------|
-| `jardiscore/kernel` | `DomainKernel` (the Koffer) — implements the `Kernel\*` contracts, provides the 11 infrastructure accessors |
-| `jardiscore/app` | HTTP-Delivery layer — FastRoute router behind its own interface, PSR-15 middleware pipeline, `DomainResponse` → PSR-7 mapper, Koffer bootstrap bridge |
+| `jardiscore/kernel` | `DomainKernel` (the DomainKernel) — implements the `Kernel\*` contracts, provides the 11 infrastructure accessors |
+| `jardiscore/app` | HTTP-Delivery layer — FastRoute router behind its own interface, PSR-15 middleware pipeline, `DomainResponse` → PSR-7 mapper, DomainKernel bootstrap bridge |
 | Generated `{Domain}Context` | Domain Layer (Builder output) — implements `Kernel\GeneratedContextInterface`, consumes `DomainKernelInterface` via `resource()` |
 | `jardissupport/*` | Support package implementations |
 | `jardisadapter/*` | Adapter implementations for external systems |
