@@ -8,6 +8,7 @@ use JardisSupport\Contract\DbConnection\ConnectionPoolInterface;
 use JardisSupport\Contract\EventListener\EventListenerRegistryInterface;
 use JardisSupport\Contract\Filesystem\FilesystemServiceInterface;
 use JardisSupport\Contract\Mailer\MailerInterface;
+use JardisSupport\Contract\Messaging\MessagingServiceInterface;
 use PDO;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -28,17 +29,18 @@ use Psr\SimpleCache\CacheInterface;
 interface DomainKernelInterface
 {
     /**
-     * Gets the domain root directory path.
+     * Gets the project root directory path.
      *
-     * @return string Absolute path to the domain root (where the domain code lives)
+     * @return string Absolute path to the root of the project the kernel
+     *     serves; multiple domains in one project share it
      */
-    public function domainRoot(): string;
+    public function projectRoot(): string;
 
     /**
      * Gets an environment configuration value.
      *
-     * Looks up private ENV first, falls back to global $_ENV.
-     * Keys are case-insensitive.
+     * Looks up the kernel's private ENV — the values loaded from the
+     * project's `config/env` files. Keys are case-insensitive.
      *
      * @param string $key The configuration key to retrieve
      * @return mixed The value or null if not found
@@ -49,9 +51,10 @@ interface DomainKernelInterface
      * Gets the PSR-11 service container.
      *
      * Used by generated `{Domain}Context` classes for class resolution and
-     * service lookup.
-     * Optional services (ClassVersion, Messaging, ConnectionPool, etc.)
-     * are accessed through the container.
+     * service lookup. Wiring the container itself is out of this
+     * interface's scope — a service earns a typed accessor here once the
+     * kernel bootstraps it from canonical ENV keys (see `messaging()`);
+     * everything else stays reachable only through this container.
      *
      * @return ContainerInterface Container instance (always available)
      */
@@ -120,4 +123,11 @@ interface DomainKernelInterface
      * @return FilesystemServiceInterface|null Filesystem service or null if not configured
      */
     public function filesystem(): ?FilesystemServiceInterface;
+
+    /**
+     * Gets the messaging service for publishing and consuming messages.
+     *
+     * @return MessagingServiceInterface|null Messaging service or null if not configured
+     */
+    public function messaging(): ?MessagingServiceInterface;
 }
