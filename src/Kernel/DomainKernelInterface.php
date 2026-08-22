@@ -28,17 +28,18 @@ use Psr\SimpleCache\CacheInterface;
 interface DomainKernelInterface
 {
     /**
-     * Gets the domain root directory path.
+     * Gets the project root directory path.
      *
-     * @return string Absolute path to the domain root (where the domain code lives)
+     * @return string Absolute path to the root of the project the kernel
+     *     serves; multiple domains in one project share it
      */
-    public function domainRoot(): string;
+    public function projectRoot(): string;
 
     /**
      * Gets an environment configuration value.
      *
-     * Looks up private ENV first, falls back to global $_ENV.
-     * Keys are case-insensitive.
+     * Looks up the kernel's private ENV — the values loaded from the
+     * project's `config/env` files. Keys are case-insensitive.
      *
      * @param string $key The configuration key to retrieve
      * @return mixed The value or null if not found
