@@ -77,7 +77,7 @@ use JardisSupport\Contract\Auth\TokenType;          // string-backed
 ```
 
 ## KERNEL CONTRACTS — GENERATED-CODE SURFACE
-- `DomainKernelInterface` — the "Koffer": 11 nullable service accessors, among them
+- `DomainKernelInterface` — the DomainKernel contract: 11 nullable service accessors, among them
   `eventListenerRegistry(): ?EventListenerRegistryInterface`, the registration counterpart to
   `eventDispatcher()`. Without a registry, event routing simply stays inactive.
 - `GeneratedContextInterface` — deliberately **empty marker**. Every generated `{Domain}Context`
