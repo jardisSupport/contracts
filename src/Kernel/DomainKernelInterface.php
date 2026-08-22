@@ -8,6 +8,7 @@ use JardisSupport\Contract\DbConnection\ConnectionPoolInterface;
 use JardisSupport\Contract\EventListener\EventListenerRegistryInterface;
 use JardisSupport\Contract\Filesystem\FilesystemServiceInterface;
 use JardisSupport\Contract\Mailer\MailerInterface;
+use JardisSupport\Contract\Messaging\MessagingServiceInterface;
 use PDO;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -50,9 +51,10 @@ interface DomainKernelInterface
      * Gets the PSR-11 service container.
      *
      * Used by generated `{Domain}Context` classes for class resolution and
-     * service lookup.
-     * Optional services (ClassVersion, Messaging, ConnectionPool, etc.)
-     * are accessed through the container.
+     * service lookup. Wiring the container itself is out of this
+     * interface's scope — a service earns a typed accessor here once the
+     * kernel bootstraps it from canonical ENV keys (see `messaging()`);
+     * everything else stays reachable only through this container.
      *
      * @return ContainerInterface Container instance (always available)
      */
@@ -121,4 +123,11 @@ interface DomainKernelInterface
      * @return FilesystemServiceInterface|null Filesystem service or null if not configured
      */
     public function filesystem(): ?FilesystemServiceInterface;
+
+    /**
+     * Gets the messaging service for publishing and consuming messages.
+     *
+     * @return MessagingServiceInterface|null Messaging service or null if not configured
+     */
+    public function messaging(): ?MessagingServiceInterface;
 }
