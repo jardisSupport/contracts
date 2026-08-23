@@ -118,6 +118,21 @@ contexts implement this marker instead of extending a package class.
 
 ---
 
+## Kernel — v2.0.0 (env-konfiguration)
+
+Two changes to `DomainKernelInterface`, released together as v2.0.0:
+
+- **`domainRoot()` → `projectRoot()` (BREAKING).** The accessor is renamed
+  and now names what it always carried in practice: the project root (the
+  git-clone target), from which the `<projectRoot>/config/env` convention
+  derives — not a config path.
+- **`messaging(): ?MessagingServiceInterface` (new, twelfth accessor).**
+  Publish/consume across the transports of `jardisadapter/messaging`
+  (Kafka, RabbitMQ, Redis). Nullable like every other service accessor:
+  without a configured transport, messaging simply stays inactive.
+
+---
+
 ## Design Principles
 
 - **One package, all contracts** — single dependency for the entire Jardis ecosystem
