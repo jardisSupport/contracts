@@ -77,9 +77,13 @@ use JardisSupport\Contract\Auth\TokenType;          // string-backed
 ```
 
 ## KERNEL CONTRACTS — GENERATED-CODE SURFACE
-- `DomainKernelInterface` — the DomainKernel contract: 11 nullable service accessors, among them
-  `eventListenerRegistry(): ?EventListenerRegistryInterface`, the registration counterpart to
-  `eventDispatcher()`. Without a registry, event routing simply stays inactive.
+- `DomainKernelInterface` — the DomainKernel contract: 12 accessors (11 nullable/typed service
+  accessors plus `container()`), among them `eventListenerRegistry():
+  ?EventListenerRegistryInterface`, the registration counterpart to `eventDispatcher()` (without a
+  registry, event routing simply stays inactive), and `messaging(): ?MessagingServiceInterface`
+  (added v2.0.0). `projectRoot(): string` was renamed from `domainRoot()` in v2.0.0 (BREAKING) —
+  it carries the project root (git-clone target), from which the `<projectRoot>/config/env`
+  convention derives.
 - `GeneratedContextInterface` — deliberately **empty marker**. Every generated `{Domain}Context`
   implements it — no shared base class needed and independent of domain boundaries. There is no
   `BoundedContextInterface` in this package.
