@@ -111,7 +111,7 @@ kernel package's base classes.
 - **Infrastructure (adapter/support):** implements the ports declared here.
 
 ## REFERENCE
-- Package README: `/Users/Rolf/Development/headgent/jardis/support/contracts/README.md`
+- Package README: `README.md` (package root)
 - Sibling package skills: `core-kernel`, `support-repository`, `support-workflow`, `support-data`,
   `adapter-messaging`, `adapter-filesystem`, `support-validation`
 - Architecture rules: `rules-architecture`, `rules-patterns`
