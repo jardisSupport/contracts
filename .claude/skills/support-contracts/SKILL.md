@@ -4,7 +4,7 @@ description: All Jardis interface contracts in one package — ports for Auth, C
 user-invocable: false
 zone: post-active
 persona: C
-prerequisites: [rules-architecture, rules-patterns]
+prerequisites: [foundation-architecture, foundation-patterns]
 next: []
 ---
 
@@ -96,7 +96,7 @@ kernel package's base classes.
 
 ## USAGE RULES
 - **Type-hint against the contract, never the implementation** — `RepositoryInterface`, not the
-  concrete repository class. Constructor injection, per `rules-architecture` (five pillars, §5).
+  concrete repository class. Constructor injection, per `foundation-architecture` (five pillars, §5).
 - A **domain/adapter package declares the port here** and implements it in its own package —
   the dependency arrow points inward to the contract, never the other way round.
 - Adding a method to a published interface is a **breaking change** for every implementor —
@@ -114,4 +114,4 @@ kernel package's base classes.
 - Package README: `README.md` (package root)
 - Sibling package skills: `core-kernel`, `support-repository`, `support-workflow`, `support-data`,
   `adapter-messaging`, `adapter-filesystem`, `support-validation`
-- Architecture rules: `rules-architecture`, `rules-patterns`
+- Architecture rules: `foundation-architecture`, `foundation-patterns`
