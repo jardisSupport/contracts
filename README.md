@@ -29,13 +29,13 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Kernel` | 6 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker) |
 | `Mailer` | 4 | Mailer, MailMessage, MailTransport + Exception |
 | `Messaging` | 10 | Publisher, Consumer, MessageHandler + Exceptions |
-| `Repository` | 4 | Generic CRUD, PkStrategy, Exceptions |
+| `Repository` | 5 | Generic CRUD, PkStrategy, Exceptions (Persist, RecordNotFound, UniqueViolation) |
 | `Scheduling` | 5 | Constraint, CronExpression, Schedule(+Violation), ScheduledTask |
 | `Secret` | 2 | Secret resolution + Exception |
 | `Validation` | 3 | Validator, ValueValidator, ValidationResult |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**86 contracts** across 17 domains.
+**87 contracts** across 17 domains.
 
 ---
 
