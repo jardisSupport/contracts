@@ -32,10 +32,10 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Repository` | 5 | Generic CRUD, PkStrategy, Exceptions (Persist, RecordNotFound, UniqueViolation) |
 | `Scheduling` | 5 | Constraint, CronExpression, Schedule(+Violation), ScheduledTask |
 | `Secret` | 2 | Secret resolution + Exception |
-| `Validation` | 3 | Validator, ValueValidator, ValidationResult |
+| `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**87 contracts** across 17 domains.
+**88 contracts** across 17 domains.
 
 ---
 

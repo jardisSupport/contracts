@@ -6,15 +6,41 @@ namespace JardisSupport\Contract\Validation;
 
 /**
  * Immutable value object representing validation results.
+ *
+ * `$kinds` carries the reason of each failure and is structurally identical to
+ * `$errors`: same keys, same nesting, same leaf positions. Each leaf is either
+ * {@see self::KIND_MISSING} or {@see self::KIND_INVALID}. An empty `$kinds` tree
+ * (callers that predate it) is to be read as "every failure is `invalid`".
  */
 final readonly class ValidationResult
 {
+    public const KIND_MISSING = 'missing';
+    public const KIND_INVALID = 'invalid';
+
     /**
      * @param array<string, mixed> $errors Hierarchical error structure
+     * @param array<string, mixed> $kinds Same structure as $errors; leaves are 'missing'|'invalid'
      */
     public function __construct(
-        private array $errors = []
+        private array $errors = [],
+        private array $kinds = []
     ) {
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getKinds(): array
+    {
+        return $this->kinds;
+    }
+
+    /**
+     * @return array<int|string, mixed>
+     */
+    public function getFieldKinds(string $field): array
+    {
+        return $this->kinds[$field] ?? [];
     }
 
     public function isValid(): bool
