@@ -23,9 +23,12 @@ interface DomainResponseInterface
     public function getStatus(): int;
 
     /**
-     * Get the aggregated data from all context results.
+     * Get the payload of the root context.
      *
-     * @return array<string, array<string, mixed>>
+     * The payload is flat: it is the business object itself (generated responses
+     * carry its type as `@type`), not a map keyed by context name.
+     *
+     * @return array<string, mixed>
      */
     public function getData(): array;
 
