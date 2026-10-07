@@ -48,8 +48,10 @@ is the port layer that keeps the hexagonal dependency direction honest across th
 | `Repository` | 4 | `RepositoryInterface`, `PrimaryKey\PkStrategy` (enum), `Exception\{PersistException, RecordNotFoundException}` | `support-repository` |
 | `Scheduling` | 5 | `ScheduleInterface`, `ScheduledTaskInterface`, `CronExpressionInterface`, `ConstraintInterface`, `ScheduleViolation` (final readonly) | `support-scheduling` |
 | `Secret` | 2 | `SecretResolverInterface`, `SecretResolutionException` | `support-secret` |
-| `Validation` | 3 | `ValidatorInterface`, `ValueValidatorInterface`, `ValidationResult` (final readonly) | `support-validation` |
+| `Validation` | 4 | `ValidatorInterface`, `ValueValidatorInterface`, `MissingValueValidatorInterface` (marker), `ValidationResult` (final readonly; `getKinds()`, `KIND_MISSING`\|`KIND_INVALID`) | `support-validation` |
 | `Workflow` | 8 | `WorkflowInterface`, `WorkflowBuilderInterface`, `WorkflowNodeBuilderInterface`, `WorkflowConfigInterface`, `WorkflowContextInterface`, `WorkflowResultInterface`, `WorkflowChainInterface`, `AggregateResponse` | `support-workflow` |
+
+**Validation marker:** a `ValueValidatorInterface` that also implements `MissingValueValidatorInterface` reports an ABSENT value; `ValidationResult::getKinds()` then yields `KIND_MISSING` (`missing`) for its failures, every other validator yields `KIND_INVALID` (`invalid`).
 
 ## PSR BOUNDARY
 PSR interfaces are **not** re-declared here — they are required as dependencies and used directly:
