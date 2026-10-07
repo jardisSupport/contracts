@@ -40,6 +40,11 @@ keys:
 `data`, `errors` and `meta` are always JSON **objects**, never arrays — see
 the Object-Coercion Rule below.
 
+`data` is the **payload of the root context**, flat — the business object
+itself, never a map keyed by an internal context or class name. Generated
+domains add a self-describing `@type` member (e.g. `"@type": "order"`); the
+name is taken from the public API vocabulary, never from a PHP class.
+
 ---
 
 ## Status ladder
@@ -68,12 +73,14 @@ table and the enum in sync.
 ## 422 payload: `{rule, messageKey, context}`
 
 When `status` is `RuleViolation` (422), `data` carries the rejection payload
-unchanged, with exactly these three keys:
+unchanged, with exactly these three keys (plus the `@type` member generated
+domains add):
 
 ```json
 {
   "status": 422,
   "data": {
+    "@type": "ruleViolation",
     "rule": "OrderMustNotBeShipped",
     "messageKey": "order.already_shipped",
     "context": { "orderId": "42" }
