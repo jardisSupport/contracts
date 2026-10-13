@@ -28,7 +28,7 @@ Contracts only — interfaces, enums, `final readonly` value objects and excepti
 implementation code, no tests.** Implementations live in the adapter/support packages; this package
 is the port layer that keeps the hexagonal dependency direction honest across the ecosystem.
 
-86 contracts across 17 namespaces under `src/`.
+89 contracts across 17 namespaces under `src/`.
 
 ## CONTRACT GROUPS
 | Namespace | # | Contracts | Implemented by |
@@ -37,7 +37,7 @@ is the port layer that keeps the hexagonal dependency direction honest across th
 | `ClassVersion` | 2 | `ClassVersionInterface`, `ClassVersionConfigInterface` | `support-classversion` |
 | `Connection` | 1 | `ConnectionInterface` — generic connection abstraction | — |
 | `Data` | 3 | `HydrationInterface`, `IdentityInterface`, `FieldMapperInterface` | `support-data` |
-| `DbConnection` | 3 | `DbConnectionInterface`, `ConnectionPoolInterface`, `DatabaseConfigInterface` | `adapter-dbconnection` |
+| `DbConnection` | 4 | `DbConnectionInterface`, `ConnectionPoolInterface`, `DatabaseConfigInterface`, `SavepointInterface` (additive capability: `savepoint`/`releaseSavepoint`/`rollbackToSavepoint`; consumers check `instanceof SavepointInterface`) | `adapter-dbconnection`, `support-repository` |
 | `DbQuery` | 17 | `DbQueryBuilderInterface`, `DbInsertBuilderInterface`, `DbUpdateBuilderInterface`, `DbDeleteBuilderInterface`, `DbQueryConditionBuilderInterface`, `DbQueryJsonConditionBuilderInterface`, `DbWhereConditionInterface`, `DbComparisonOperatorsInterface`, `DbJoinInterface`, `DbOrderLimitInterface`, `DbWindowBuilderInterface`, `DbQueryExistsInterface`, `DbSqlGeneratorInterface`, `DbPreparedQueryInterface`, `ExpressionInterface`, `QueryResultInterface`, `ExecuteResultInterface` | `support-dbquery` |
 | `DotEnv` | 1 | `DotEnvInterface` | `support-dotenv` |
 | `EventListener` | 1 | `EventListenerRegistryInterface` — registration side, paired with the PSR-14 dispatcher | `adapter-eventdispatcher` |
@@ -103,6 +103,8 @@ kernel package's base classes.
   the dependency arrow points inward to the contract, never the other way round.
 - Adding a method to a published interface is a **breaking change** for every implementor —
   treat contract edits as a coordinated fleet release (see `do-git-update`).
+  New capabilities therefore arrive as a **new, additive interface** next to the existing one
+  (e.g. `SavepointInterface` beside `DbConnectionInterface`) — consumers check `instanceof`; minor release.
 - Exceptions in this package are concrete classes on purpose (`MessageException` hierarchy,
   `PersistException`, `RecordNotFoundException`, `SecretResolutionException`) so callers can catch
   them without depending on an implementation package.
