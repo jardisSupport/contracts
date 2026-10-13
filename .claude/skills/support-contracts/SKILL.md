@@ -105,6 +105,10 @@ kernel package's base classes.
   treat contract edits as a coordinated fleet release (see `do-git-update`).
   New capabilities therefore arrive as a **new, additive interface** next to the existing one
   (e.g. `SavepointInterface` beside `DbConnectionInterface`) — consumers check `instanceof`; minor release.
+- `UniqueViolationException` (subtype of `PersistException`, v2.5.0) carries `getConstraint(): ?string`,
+  `getColumns(): list<string>` (empty = driver/dialect delivers no columns, never a partial list) and
+  `getTable(): ?string`; constructor `(message, constraint, previous, columns = [], table = null)` — the old
+  3-argument call stays valid.
 - Exceptions in this package are concrete classes on purpose (`MessageException` hierarchy,
   `PersistException`, `RecordNotFoundException`, `SecretResolutionException`) so callers can catch
   them without depending on an implementation package.

@@ -133,6 +133,31 @@ Two changes to `DomainKernelInterface`, released together as v2.0.0:
 
 ---
 
+## Repository exceptions — `UniqueViolationException` (v2.5.0)
+
+`Repository\Exception\UniqueViolationException` (subtype of `PersistException`) tells the caller **which** unique
+constraint failed:
+
+| Getter | Type | Meaning |
+|---|---|---|
+| `getConstraint()` | `?string` | Constraint/index name, `null` if the driver does not expose it |
+| `getColumns()` | `list<string>` | Violated columns. **`[]` = unknown** (driver/dialect delivers no columns) — never a partial list |
+| `getTable()` | `?string` | Table of the violated constraint, `null` if unknown |
+
+The constructor is `(message, constraint, previous, columns = [], table = null)` — the former three-argument call is
+unchanged (additive, minor).
+
+```php
+try {
+    $repository->insert($row);
+} catch (UniqueViolationException $e) {
+    $columns = $e->getColumns();   // e.g. ['email'] — [] when unknown
+    $table = $e->getTable();       // e.g. 'users' — null when unknown
+}
+```
+
+---
+
 ## Design Principles
 
 - **One package, all contracts** — single dependency for the entire Jardis ecosystem
