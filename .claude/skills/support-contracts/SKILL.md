@@ -48,10 +48,12 @@ is the port layer that keeps the hexagonal dependency direction honest across th
 | `Repository` | 6 | `RepositoryInterface`, `PrimaryKey\PkStrategy` (enum), `Exception\{PersistException, RecordNotFoundException, UniqueViolationException, TransientConflictException}` | `support-repository` |
 | `Scheduling` | 5 | `ScheduleInterface`, `ScheduledTaskInterface`, `CronExpressionInterface`, `ConstraintInterface`, `ScheduleViolation` (final readonly) | `support-scheduling` |
 | `Secret` | 2 | `SecretResolverInterface`, `SecretResolutionException` | `support-secret` |
-| `Validation` | 4 | `ValidatorInterface`, `ValueValidatorInterface`, `MissingValueValidatorInterface` (marker), `ValidationResult` (final readonly; `getKinds()`, `KIND_MISSING`\|`KIND_INVALID`) | `support-validation` |
+| `Validation` | 4 | `ValidatorInterface`, `ValueValidatorInterface`, `MissingValueValidatorInterface` (marker), `ValidationResult` (final readonly; `getKinds()`, `KIND_MISSING`\|`KIND_INVALID`, `toFields()`) | `support-validation` |
 | `Workflow` | 8 | `WorkflowInterface`, `WorkflowBuilderInterface`, `WorkflowNodeBuilderInterface`, `WorkflowConfigInterface`, `WorkflowContextInterface`, `WorkflowResultInterface`, `WorkflowChainInterface`, `AggregateResponse` | `support-workflow` |
 
 **Validation marker:** a `ValueValidatorInterface` that also implements `MissingValueValidatorInterface` reports an ABSENT value; `ValidationResult::getKinds()` then yields `KIND_MISSING` (`missing`) for its failures, every other validator yields `KIND_INVALID` (`invalid`).
+
+**Flat findings (v2.7.0):** `ValidationResult::toFields(?string $root = null): list<array{field, reason, message}>` flattens `getErrors()` + `getKinds()` — `field` = dot path of the string keys (list indices add no segment), a TOP-LEVEL segment equal to `$root` is stripped (`null` strips nothing), `reason` = `REASON_MISSING` (`'missing'`) exactly for `KIND_MISSING`, else `REASON_INVALID` (`'invalid'`; no kind = `invalid`, no text fallback), `message` = validator text (may be `''`). Answer texts/`messageKey` stay with the caller — do not re-implement the tree walk.
 
 ## PSR BOUNDARY
 PSR interfaces are **not** re-declared here — they are required as dependencies and used directly:

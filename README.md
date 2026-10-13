@@ -32,7 +32,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Repository` | 6 | Generic CRUD, PkStrategy, Exceptions (Persist, RecordNotFound, UniqueViolation, TransientConflict) |
 | `Scheduling` | 5 | Constraint, CronExpression, Schedule(+Violation), ScheduledTask |
 | `Secret` | 2 | Secret resolution + Exception |
-| `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`) |
+| `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`; `toFields()` flat findings) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
 **90 contracts** across 17 domains.
@@ -181,6 +181,38 @@ try {
     // technical failure
 }
 ```
+
+---
+
+## Validation — `ValidationResult::toFields()` (v2.7.0)
+
+`ValidationResult` flattens its error tree into a list of findings, so a caller does not re-implement the walk over
+`getErrors()` + `getKinds()`:
+
+```php
+$fields = $result->toFields();          // list<array{field: string, reason: string, message: string}>
+$fields = $result->toFields('order');   // top-level segment "order" carries no path prefix
+```
+
+| Member | Meaning |
+|---|---|
+| `field` | Dot path of the string keys down to the message. List indices (int keys) add no segment of their own |
+| `reason` | `ValidationResult::REASON_MISSING` (`'missing'`) exactly when the validator kind is `KIND_MISSING`, otherwise `REASON_INVALID` (`'invalid'`). A finding without a kind is `invalid`; there is no text fallback |
+| `message` | The validator text as delivered — may be `''` |
+| `$root` | A **top-level** segment equal to `$root` is stripped from the path (aggregate root); other top-level segments stay in it. `null` strips nothing |
+
+```php
+// errors: ['order' => ['email' => ['Required'], 'line' => ['qty' => ['Too small'], 0 => 'x']]]
+// kinds:  ['order' => ['email' => ['missing'],  'line' => ['qty' => ['invalid'], 0 => 'invalid']]]
+$result->toFields();
+// [['field' => 'order.email',    'reason' => 'missing', 'message' => 'Required'],
+//  ['field' => 'order.line.qty', 'reason' => 'invalid', 'message' => 'Too small'],
+//  ['field' => 'order.line',     'reason' => 'invalid', 'message' => 'x']]
+```
+
+Answer texts and message keys stay with the caller: the package delivers path, reason and validator text only. A
+caller that needs a default text for an empty `message` (or a `messageKey` per reason) maps `reason` itself.
+Purely additive (minor).
 
 ---
 
