@@ -28,7 +28,7 @@ Contracts only — interfaces, enums, `final readonly` value objects and excepti
 implementation code, no tests.** Implementations live in the adapter/support packages; this package
 is the port layer that keeps the hexagonal dependency direction honest across the ecosystem.
 
-89 contracts across 17 namespaces under `src/`.
+90 contracts across 17 namespaces under `src/`.
 
 ## CONTRACT GROUPS
 | Namespace | # | Contracts | Implemented by |
@@ -45,7 +45,7 @@ is the port layer that keeps the hexagonal dependency direction honest across th
 | `Kernel` | 6 | `DomainKernelInterface`, `GeneratedContextInterface`, `ContextResponseInterface`, `DomainResponseInterface`, `EventScope` (enum), `ResponseStatus` (enum) | `core-kernel` + generated domain |
 | `Mailer` | 4 | `MailerInterface`, `MailMessageInterface`, `MailTransportInterface`, `MailerExceptionInterface` | `adapter-mailer` |
 | `Messaging` | 10 | `MessagePublisherInterface`, `MessageConsumerInterface`, `PublisherInterface`, `ConsumerInterface`, `MessageHandlerInterface`, `MessagingServiceInterface` + `Exception\{MessageException, ConnectionException, ConsumerException, PublishException}` | `adapter-messaging` |
-| `Repository` | 4 | `RepositoryInterface`, `PrimaryKey\PkStrategy` (enum), `Exception\{PersistException, RecordNotFoundException}` | `support-repository` |
+| `Repository` | 6 | `RepositoryInterface`, `PrimaryKey\PkStrategy` (enum), `Exception\{PersistException, RecordNotFoundException, UniqueViolationException, TransientConflictException}` | `support-repository` |
 | `Scheduling` | 5 | `ScheduleInterface`, `ScheduledTaskInterface`, `CronExpressionInterface`, `ConstraintInterface`, `ScheduleViolation` (final readonly) | `support-scheduling` |
 | `Secret` | 2 | `SecretResolverInterface`, `SecretResolutionException` | `support-secret` |
 | `Validation` | 4 | `ValidatorInterface`, `ValueValidatorInterface`, `MissingValueValidatorInterface` (marker), `ValidationResult` (final readonly; `getKinds()`, `KIND_MISSING`\|`KIND_INVALID`) | `support-validation` |
@@ -109,6 +109,11 @@ kernel package's base classes.
   `getColumns(): list<string>` (empty = driver/dialect delivers no columns, never a partial list) and
   `getTable(): ?string`; constructor `(message, constraint, previous, columns = [], table = null)` — the old
   3-argument call stays valid.
+- `TransientConflictException` (subtype of `PersistException`, v2.6.0) marks a transient DB concurrency conflict
+  (snapshot/serialization conflict, deadlock — repeating the unit of work in a NEW transaction can succeed);
+  carries `getDriverCode(): ?string` (driver code/SQLSTATE as text, e.g. `'1020'`, `'1213'`, `'40001'`, `'40P01'`)
+  and the original as `previous`; constructor `(message = '', driverCode = null, previous = null)`. Catch it
+  before `PersistException`.
 - Exceptions in this package are concrete classes on purpose (`MessageException` hierarchy,
   `PersistException`, `RecordNotFoundException`, `SecretResolutionException`) so callers can catch
   them without depending on an implementation package.

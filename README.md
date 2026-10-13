@@ -29,13 +29,13 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Kernel` | 6 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker) |
 | `Mailer` | 4 | Mailer, MailMessage, MailTransport + Exception |
 | `Messaging` | 10 | Publisher, Consumer, MessageHandler + Exceptions |
-| `Repository` | 5 | Generic CRUD, PkStrategy, Exceptions (Persist, RecordNotFound, UniqueViolation) |
+| `Repository` | 6 | Generic CRUD, PkStrategy, Exceptions (Persist, RecordNotFound, UniqueViolation, TransientConflict) |
 | `Scheduling` | 5 | Constraint, CronExpression, Schedule(+Violation), ScheduledTask |
 | `Secret` | 2 | Secret resolution + Exception |
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**89 contracts** across 17 domains.
+**90 contracts** across 17 domains.
 
 ---
 
@@ -153,6 +153,32 @@ try {
 } catch (UniqueViolationException $e) {
     $columns = $e->getColumns();   // e.g. ['email'] — [] when unknown
     $table = $e->getTable();       // e.g. 'users' — null when unknown
+}
+```
+
+### `TransientConflictException` (v2.6.0)
+
+`Repository\Exception\TransientConflictException` (subtype of `PersistException`) marks a **transient concurrency
+conflict** of the database — snapshot/serialization conflict or deadlock. The statement was rejected, not wrong:
+repeating the whole unit of work in a **new** transaction can succeed. Without this type a caller cannot tell such a
+conflict from a technical failure.
+
+| Member | Type | Meaning |
+|---|---|---|
+| `getDriverCode()` | `?string` | Driver error code / SQLSTATE as text, `null` if the driver does not expose it. Examples (not exhaustive): `'1020'` (MariaDB "record has changed since last read"), `'1213'` (deadlock), `'40001'` (serialization failure), `'40P01'` (PostgreSQL deadlock) |
+| `getPrevious()` | `?Throwable` | The original driver exception |
+
+The constructor is `(message = '', driverCode = null, previous = null)`. Purely additive (minor): every existing
+`catch (PersistException)` still catches it — put the more specific `catch` first.
+
+```php
+try {
+    $repository->update($row);
+} catch (TransientConflictException $e) {
+    $code = $e->getDriverCode();   // e.g. '1020' — null when unknown
+    // retry the unit of work in a new transaction, or answer "conflict"
+} catch (PersistException $e) {
+    // technical failure
 }
 ```
 
