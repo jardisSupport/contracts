@@ -21,7 +21,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `ClassVersion` | 2 | Versioned class resolution |
 | `Connection` | 1 | Generic connection abstraction |
 | `Data` | 3 | Hydration, Identity, FieldMapper |
-| `DbConnection` | 3 | ConnectionPool, DbConnection, DatabaseConfig |
+| `DbConnection` | 4 | ConnectionPool, DbConnection, DatabaseConfig, Savepoint (additive: nested transaction brackets) |
 | `DbQuery` | 17 | Query Builder, Conditions, Joins, Expressions, Results |
 | `DotEnv` | 1 | Environment variable loading |
 | `EventListener` | 1 | EventListenerRegistry (paired with PSR-14 EventDispatcher) |
@@ -35,7 +35,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**88 contracts** across 17 domains.
+**89 contracts** across 17 domains.
 
 ---
 
