@@ -6,7 +6,7 @@ namespace JardisSupport\Contract\Auth;
 
 /**
  * Names of the request attributes under which a transport layer stores the
- * authenticated subject and tenant after resolving an access token.
+ * authenticated subject, subject id, tenant and session reference after resolving an access token.
  *
  * The names are defined exactly once here, so producers (authenticating
  * middleware) and consumers (request handlers, the domain bridge) never
@@ -19,6 +19,12 @@ final class RequestAttribute
 
     /** Attribute holding the tenant of the authenticated session (string|null). */
     public const TENANT = 'jardisTenant';
+
+    /** Attribute holding the bare subject identifier, without type prefix (string). */
+    public const SUBJECT_ID = 'jardisSubjectId';
+
+    /** Attribute holding the session reference used to revoke exactly this session (string). */
+    public const SESSION = 'jardisSession';
 
     private function __construct()
     {
