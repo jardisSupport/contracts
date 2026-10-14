@@ -28,12 +28,12 @@ Contracts only — interfaces, enums, `final readonly` value objects and excepti
 implementation code, no tests.** Implementations live in the adapter/support packages; this package
 is the port layer that keeps the hexagonal dependency direction honest across the ecosystem.
 
-92 contracts across 17 namespaces under `src/`.
+93 contracts across 17 namespaces under `src/`.
 
 ## CONTRACT GROUPS
 | Namespace | # | Contracts | Implemented by |
 |---|---|---|---|
-| `Auth` | 12 | `AuthResultInterface`, `TenantAwareAuthResultInterface` (additive: `getTenant()`; consumers check `instanceof`), `RequestAttribute` (final constants `SUBJECT = jardisSubject`, `TENANT = jardisTenant` — request attribute names for the authenticated subject/tenant), `AuthenticatorInterface`, `CredentialInterface`, `CredentialType` (enum), `GuardInterface`, `HashedTokenInterface`, `PasswordHasherInterface`, `SessionInterface`, `TokenStoreInterface`, `TokenType` (enum) | `support-auth` |
+| `Auth` | 13 | `AuthResultInterface`, `TenantAwareAuthResultInterface` (additive: `getTenant()`; consumers check `instanceof`), `SessionAwareAuthResultInterface` (extends it; `getSubjectId()` bare id, `getSessionReference()` token-hash reference to revoke exactly this session), `RequestAttribute` (final constants `SUBJECT = jardisSubject`, `TENANT = jardisTenant`, `SUBJECT_ID = jardisSubjectId`, `SESSION = jardisSession` — request attribute names), `AuthenticatorInterface`, `CredentialInterface`, `CredentialType` (enum), `GuardInterface`, `HashedTokenInterface`, `PasswordHasherInterface`, `SessionInterface`, `TokenStoreInterface`, `TokenType` (enum) | `support-auth` |
 | `ClassVersion` | 2 | `ClassVersionInterface`, `ClassVersionConfigInterface` | `support-classversion` |
 | `Connection` | 1 | `ConnectionInterface` — generic connection abstraction | — |
 | `Data` | 3 | `HydrationInterface`, `IdentityInterface`, `FieldMapperInterface` | `support-data` |
@@ -78,7 +78,7 @@ use JardisSupport\Contract\Repository\PrimaryKey\PkStrategy;  // pure enum
 
 use JardisSupport\Contract\Auth\CredentialType;     // string-backed
 use JardisSupport\Contract\Auth\TokenType;          // string-backed
-use JardisSupport\Contract\Auth\RequestAttribute;  // final constants: SUBJECT = 'jardisSubject', TENANT = 'jardisTenant'
+use JardisSupport\Contract\Auth\RequestAttribute;  // final constants: SUBJECT, TENANT, SUBJECT_ID = 'jardisSubjectId', SESSION = 'jardisSession'
 ```
 
 ## KERNEL CONTRACTS — GENERATED-CODE SURFACE

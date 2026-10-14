@@ -17,7 +17,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 
 | Namespace | Contracts | Purpose |
 |-----------|-----------|---------|
-| `Auth` | 12 | AuthResult, TenantAwareAuthResult, RequestAttribute (subject/tenant attribute names), Authenticator, Credential(+Type), Guard, HashedToken, PasswordHasher, Session, TokenStore(+Type) |
+| `Auth` | 13 | AuthResult, TenantAwareAuthResult, SessionAwareAuthResult, RequestAttribute (subject/subject-id/tenant/session attribute names), Authenticator, Credential(+Type), Guard, HashedToken, PasswordHasher, Session, TokenStore(+Type) |
 | `ClassVersion` | 2 | Versioned class resolution |
 | `Connection` | 1 | Generic connection abstraction |
 | `Data` | 3 | Hydration, Identity, FieldMapper |
@@ -35,7 +35,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`; `toFields()` flat findings) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**92 contracts** across 17 domains.
+**93 contracts** across 17 domains.
 
 ---
 
@@ -236,6 +236,29 @@ if ($result instanceof TenantAwareAuthResultInterface) {
 `TenantAwareAuthResultInterface extends AuthResultInterface` adds `getTenant(): ?string`.
 `AuthResultInterface` itself is unchanged, so existing implementers stay valid. `jardissupport/auth`
 v1.2.0 ships the implementation (`TokenAuthenticator`).
+
+## Auth — subject id and session reference: `SessionAwareAuthResultInterface` (v2.9.0)
+
+Additive, no breaking change. A token session resolves to more than the qualified subject:
+consumers no longer split `user:42` themselves and can revoke exactly the session they were
+authenticated with.
+
+```php
+use JardisSupport\Contract\Auth\RequestAttribute;
+use JardisSupport\Contract\Auth\SessionAwareAuthResultInterface;
+
+RequestAttribute::SUBJECT_ID; // 'jardisSubjectId' - bare subject identifier ('42' from 'user:42')
+RequestAttribute::SESSION;    // 'jardisSession'   - session reference (hash of the access token)
+
+if ($result instanceof SessionAwareAuthResultInterface) {
+    $id        = $result->getSubjectId();        // ?string
+    $reference = $result->getSessionReference(); // ?string
+}
+```
+
+`SessionAwareAuthResultInterface extends TenantAwareAuthResultInterface` adds `getSubjectId(): ?string`
+and `getSessionReference(): ?string`; existing implementers stay valid. `jardissupport/auth` v1.3.0
+ships the implementation (`TokenAuthenticator`, `SessionManager::invalidateByReference()`).
 
 ## Design Principles
 
