@@ -17,7 +17,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 
 | Namespace | Contracts | Purpose |
 |-----------|-----------|---------|
-| `Auth` | 13 | AuthResult, TenantAwareAuthResult, SessionAwareAuthResult, RequestAttribute (subject/subject-id/tenant/session attribute names), Authenticator, Credential(+Type), Guard, HashedToken, PasswordHasher, Session, TokenStore(+Type) |
+| `Auth` | 16 | UserLookup, CredentialRecord, SessionClaim (login lookup + session claim names), AuthResult, TenantAwareAuthResult, SessionAwareAuthResult, RequestAttribute (subject/subject-id/tenant/session attribute names), Authenticator, Credential(+Type), Guard, HashedToken, PasswordHasher, Session, TokenStore(+Type) |
 | `ClassVersion` | 2 | Versioned class resolution |
 | `Connection` | 1 | Generic connection abstraction |
 | `Data` | 3 | Hydration, Identity, FieldMapper |
@@ -26,6 +26,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `DotEnv` | 1 | Environment variable loading |
 | `EventListener` | 1 | EventListenerRegistry (paired with PSR-14 EventDispatcher) |
 | `Filesystem` | 6 | Filesystem (Reader/Writer/Service), FileInfo + Exception |
+| `Identity` | 12 | User/Tenant/Membership/Group/Invitation entity contracts, UserStatus (enum), and the six store ports (User, Tenant, Membership, Group, GroupMember, Invitation) |
 | `Kernel` | 6 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker) |
 | `Mailer` | 4 | Mailer, MailMessage, MailTransport + Exception |
 | `Messaging` | 10 | Publisher, Consumer, MessageHandler + Exceptions |
@@ -35,7 +36,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`; `toFields()` flat findings) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**93 contracts** across 17 domains.
+**108 contracts** across 18 domains.
 
 ---
 
@@ -60,6 +61,7 @@ JardisSupport\Contract\
 ├── DotEnv\
 ├── EventListener\
 ├── Filesystem\
+├── Identity\
 ├── Kernel\
 ├── Mailer\
 ├── Messaging\
@@ -259,6 +261,52 @@ if ($result instanceof SessionAwareAuthResultInterface) {
 `SessionAwareAuthResultInterface extends TenantAwareAuthResultInterface` adds `getSubjectId(): ?string`
 and `getSessionReference(): ?string`; existing implementers stay valid. `jardissupport/auth` v1.3.0
 ships the implementation (`TokenAuthenticator`, `SessionManager::invalidateByReference()`).
+
+## Auth — login lookup and session claims: `UserLookupInterface`, `CredentialRecordInterface`, `SessionClaim` (v2.10.0)
+
+Additive, no breaking change. A password login resolves an identifier to credential data through a
+port, and the session claim names are defined once.
+
+```php
+use JardisSupport\Contract\Auth\CredentialRecordInterface;
+use JardisSupport\Contract\Auth\SessionClaim;
+use JardisSupport\Contract\Auth\UserLookupInterface;
+
+SessionClaim::TENANT; // 'tenant' - tenant of the session
+SessionClaim::ROLE;   // 'role'   - role of the subject within the tenant
+
+/** @var UserLookupInterface $lookup */
+$record = $lookup->lookup('anna@example.com'); // ?CredentialRecordInterface
+if ($record !== null) {
+    $hash    = $record->getPasswordHash(); // string
+    $subject = $record->getSubject();      // 'user:42' (format type:id)
+    $claims  = $record->getClaims();       // array<string, mixed>, e.g. [SessionClaim::TENANT => 't1']
+}
+```
+
+`jardissupport/identity` v1.0 and `jardissupport/auth` v1.4 ship the implementations.
+
+## Identity - users, tenants, memberships, groups, invitations (v2.10.0)
+
+Additive, new namespace `JardisSupport\Contract\Identity`. Entity contracts are read-only views;
+the password hash is deliberately **not** part of `UserInterface` (only `UserStoreInterface::passwordHashOf()`
+and `CredentialRecordInterface` expose it). Invitations hold the token hash only.
+
+```php
+use JardisSupport\Contract\Identity\InvitationStoreInterface;
+use JardisSupport\Contract\Identity\UserStatus;
+use JardisSupport\Contract\Identity\UserStoreInterface;
+
+/** @var UserStoreInterface $users */
+$users->updateStatus($id, UserStatus::Disabled);
+$hash = $users->passwordHashOf($id); // ?string
+
+/** @var InvitationStoreInterface $invitations */
+$accepted = $invitations->markAccepted($invitationId, new DateTimeImmutable()); // false if already accepted or revoked
+```
+
+Ports: `UserStoreInterface`, `TenantStoreInterface`, `MembershipStoreInterface`, `GroupStoreInterface`,
+`GroupMemberStoreInterface`, `InvitationStoreInterface`. `jardissupport/identity` v1.0 ships the implementation.
 
 ## Design Principles
 
