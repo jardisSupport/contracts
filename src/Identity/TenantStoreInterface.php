@@ -6,6 +6,8 @@ namespace JardisSupport\Contract\Identity;
 
 /**
  * Persistence port for tenants.
+ *
+ * @deprecated 2.11.0 Identity ist eine Generic Subdomain; ersetzt durch die Builder-Blaupause „Access“
  */
 interface TenantStoreInterface
 {

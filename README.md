@@ -17,7 +17,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 
 | Namespace | Contracts | Purpose |
 |-----------|-----------|---------|
-| `Auth` | 16 | UserLookup, CredentialRecord, SessionClaim (login lookup + session claim names), AuthResult, TenantAwareAuthResult, SessionAwareAuthResult, RequestAttribute (subject/subject-id/tenant/session attribute names), Authenticator, Credential(+Type), Guard, HashedToken, PasswordHasher, Session, TokenStore(+Type) |
+| `Auth` | 23 | UserLookup, CredentialRecord, SessionClaim (login lookup + session claim names), AuthResult, TenantAwareAuthResult, SessionAwareAuthResult, RequestAttribute (subject/subject-id/tenant/session attribute names), Authenticator, Credential(+Type), Guard, HashedToken, PasswordHasher, Session, TokenStore(+Type); since 2.11: AuthServices, SessionManager, TokenIssuer, TokenRedeemer, SessionResult, IssuedToken, RoleAwareAuthResult |
 | `ClassVersion` | 2 | Versioned class resolution |
 | `Connection` | 1 | Generic connection abstraction |
 | `Data` | 3 | Hydration, Identity, FieldMapper |
@@ -26,7 +26,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `DotEnv` | 1 | Environment variable loading |
 | `EventListener` | 1 | EventListenerRegistry (paired with PSR-14 EventDispatcher) |
 | `Filesystem` | 6 | Filesystem (Reader/Writer/Service), FileInfo + Exception |
-| `Identity` | 12 | User/Tenant/Membership/Group/Invitation entity contracts, UserStatus (enum), and the six store ports (User, Tenant, Membership, Group, GroupMember, Invitation) |
+| `Identity` | 12 | **Deprecated since 2.11** — User/Tenant/Membership/Group/Invitation entity contracts, UserStatus (enum), and the six store ports (User, Tenant, Membership, Group, GroupMember, Invitation) |
 | `Kernel` | 6 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker) |
 | `Mailer` | 4 | Mailer, MailMessage, MailTransport + Exception |
 | `Messaging` | 10 | Publisher, Consumer, MessageHandler + Exceptions |
@@ -36,7 +36,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`; `toFields()` flat findings) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**108 contracts** across 18 domains.
+**115 contracts** across 18 domains.
 
 ---
 
@@ -286,7 +286,10 @@ if ($record !== null) {
 
 `jardissupport/identity` v1.0 and `jardissupport/auth` v1.4 ship the implementations.
 
-## Identity - users, tenants, memberships, groups, invitations (v2.10.0)
+## Identity - users, tenants, memberships, groups, invitations (v2.10.0) — DEPRECATED since 2.11.0
+
+> **Deprecated (2.11.0):** Identity is a generic subdomain; it is replaced by the Builder blueprint "Access".
+> All 12 `Identity\*` contracts carry `@deprecated 2.11.0`. Nothing is removed — removal is reserved for the next major.
 
 Additive, new namespace `JardisSupport\Contract\Identity`. Entity contracts are read-only views;
 the password hash is deliberately **not** part of `UserInterface` (only `UserStoreInterface::passwordHashOf()`
@@ -307,6 +310,35 @@ $accepted = $invitations->markAccepted($invitationId, new DateTimeImmutable()); 
 
 Ports: `UserStoreInterface`, `TenantStoreInterface`, `MembershipStoreInterface`, `GroupStoreInterface`,
 `GroupMemberStoreInterface`, `InvitationStoreInterface`. `jardissupport/identity` v1.0 ships the implementation.
+
+## Auth services (2.11)
+
+Additive. A generated process node reaches `auth` through `DomainKernelInterface::auth(): ?AuthServicesInterface`
+(`null` if the app wires no `auth`) without knowing a concrete class. The contracts carry no data classes;
+domain events of the session lifecycle stay internal to the implementing package. Subjects are qualified
+strings `type:id`.
+
+| Contract | Purpose |
+|----------|---------|
+| `AuthServicesInterface` | Four accessors: `sessions()`, `tokenIssuer()`, `tokenRedeemer()`, `hasher()` |
+| `SessionManagerInterface` | `create(string $subject, array $claims = [])`, `refresh(string $refreshToken)` (both return `SessionResultInterface`), `invalidateByReference(string $sessionReference)`, `invalidateAll(string $subject)` |
+| `SessionResultInterface` | `getAccessToken()`, `getRefreshToken()`, `getSession(): SessionInterface` |
+| `TokenIssuerInterface` | `issue(TokenType $type, string $subject, int $ttlSeconds, array $claims = []): IssuedTokenInterface` |
+| `IssuedTokenInterface` | `getPlain()` (hand out once), `getHashed(): HashedTokenInterface` |
+| `TokenRedeemerInterface` | `peek(string $plain, TokenType $expected)` (find + validate, no revocation), `redeem(...)` (validate + revoke once) |
+| `RoleAwareAuthResultInterface` | extends `AuthResultInterface`, adds `getRole(): ?string` (claim `SessionClaim::ROLE`) |
+
+Also new: `TokenType::Invitation` (`'invitation'`) and `RequestAttribute::ROLE` (`'jardisRole'`, set only when the
+access token carries the role claim). `DomainKernelInterface::auth()` is a new method on a published interface:
+kernel implementors must add it.
+
+```php
+use JardisSupport\Contract\Auth\TokenType;
+
+$auth = $kernel->auth();                       // ?AuthServicesInterface
+$issued = $auth?->tokenIssuer()->issue(TokenType::Invitation, 'user:42', 86400);
+$token  = $auth?->tokenRedeemer()->peek($issued->getPlain(), TokenType::Invitation); // no revocation
+```
 
 ## Design Principles
 

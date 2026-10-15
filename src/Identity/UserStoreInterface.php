@@ -6,6 +6,8 @@ namespace JardisSupport\Contract\Identity;
 
 /**
  * Persistence port for users. The password hash is passed alongside the user, not part of it.
+ *
+ * @deprecated 2.11.0 Identity ist eine Generic Subdomain; ersetzt durch die Builder-Blaupause „Access“
  */
 interface UserStoreInterface
 {
