@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 /**
  * A tenant (organisation) that owns memberships and groups.
+ *
+ * @deprecated 2.11.0 Identity ist eine Generic Subdomain; ersetzt durch die Builder-Blaupause „Access“
  */
 interface TenantInterface
 {

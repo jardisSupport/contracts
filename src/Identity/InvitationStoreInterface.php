@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 /**
  * Persistence port for invitations.
+ *
+ * @deprecated 2.11.0 Identity ist eine Generic Subdomain; ersetzt durch die Builder-Blaupause „Access“
  */
 interface InvitationStoreInterface
 {

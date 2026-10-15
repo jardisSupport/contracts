@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'src/**'
+      - 'tests/**'
+      - 'phpunit.xml'
       - 'bin/**'
       - 'docs/**'
       - 'composer.json'
@@ -18,6 +20,8 @@ on:
     branches: [main, develop]
     paths:
       - 'src/**'
+      - 'tests/**'
+      - 'phpunit.xml'
       - 'bin/**'
       - 'docs/**'
       - 'composer.json'
@@ -118,6 +122,39 @@ jobs:
 
       - name: Check docs/response-envelope.md matches ResponseStatus enum cases
         run: make check-envelope-consistency
+
+      - name: Cleanup
+        if: always()
+        run: make remove
+
+      - name: Logout from Docker Hub
+        if: always()
+        env:
+          DOCKER_CONFIG: /tmp/.docker
+        run: docker logout
+
+  phpunit:
+    name: phpunit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup environment
+        run: cp .env.example .env
+
+      - name: Login to Docker Hub
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        env:
+          DOCKER_CONFIG: /tmp/.docker
+        run: |
+          mkdir -p $DOCKER_CONFIG
+          echo "${{ secrets.DOCKER_PAT }}" | docker login -u "${{ secrets.DOCKER_USER_NAME }}" --password-stdin
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Run PHPUnit
+        run: make phpunit
 
       - name: Cleanup
         if: always()

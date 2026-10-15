@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 /**
  * An invitation of an email address into a tenant. Only the token hash is held, never the plain token.
+ *
+ * @deprecated 2.11.0 Identity ist eine Generic Subdomain; ersetzt durch die Builder-Blaupause „Access“
  */
 interface InvitationInterface
 {
