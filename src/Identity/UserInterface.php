@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 /**
  * A user account. Does not expose the password hash (see UserStoreInterface::passwordHashOf()).
+ *
+ * @deprecated 2.11.0 Identity ist eine Generic Subdomain; ersetzt durch die Builder-Blaupause „Access“
  */
 interface UserInterface
 {

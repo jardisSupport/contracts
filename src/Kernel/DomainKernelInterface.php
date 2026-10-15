@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JardisSupport\Contract\Kernel;
 
+use JardisSupport\Contract\Auth\AuthServicesInterface;
 use JardisSupport\Contract\DbConnection\ConnectionPoolInterface;
 use JardisSupport\Contract\EventListener\EventListenerRegistryInterface;
 use JardisSupport\Contract\Filesystem\FilesystemServiceInterface;
@@ -130,4 +131,11 @@ interface DomainKernelInterface
      * @return MessagingServiceInterface|null Messaging service or null if not configured
      */
     public function messaging(): ?MessagingServiceInterface;
+
+    /**
+     * Gets the auth services (sessions, one-time tokens, password hashing).
+     *
+     * @return AuthServicesInterface|null Auth services or null if the app wires no `auth`
+     */
+    public function auth(): ?AuthServicesInterface;
 }

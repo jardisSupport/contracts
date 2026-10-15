@@ -1,4 +1,8 @@
 <---qa tools----->: ## -----------------------------------------------------------------------
+phpunit: ## Run all tests
+	$(DOCKER_COMPOSE) run --rm --no-deps phpcli vendor/bin/phpunit --bootstrap ./tests/bootstrap.php /app/tests
+.PHONY: phpunit
+
 phpstan: ## Run PHPStan analysis
 	$(DOCKER_COMPOSE) run --rm --no-deps phpcli vendor/bin/phpstan analyse /app/src -c phpstan.neon
 .PHONY: phpstan

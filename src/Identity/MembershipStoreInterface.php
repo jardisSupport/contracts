@@ -6,6 +6,8 @@ namespace JardisSupport\Contract\Identity;
 
 /**
  * Persistence port for memberships; a membership is identified by (userId, tenantId).
+ *
+ * @deprecated 2.11.0 Identity ist eine Generic Subdomain; ersetzt durch die Builder-Blaupause „Access“
  */
 interface MembershipStoreInterface
 {

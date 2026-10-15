@@ -11,4 +11,5 @@ enum TokenType: string
     case ApiKey = 'api_key';
     case Verification = 'verification';
     case PasswordReset = 'password_reset';
+    case Invitation = 'invitation';
 }

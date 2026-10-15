@@ -26,6 +26,12 @@ final class RequestAttribute
     /** Attribute holding the session reference used to revoke exactly this session (string). */
     public const SESSION = 'jardisSession';
 
+    /**
+     * Attribute holding the role of the authenticated subject (string). Set from the session claim
+     * `SessionClaim::ROLE`, and only when the access token carries that claim.
+     */
+    public const ROLE = 'jardisRole';
+
     private function __construct()
     {
     }
