@@ -340,6 +340,19 @@ $issued = $auth?->tokenIssuer()->issue(TokenType::Invitation, 'user:42', 86400);
 $token  = $auth?->tokenRedeemer()->peek($issued->getPlain(), TokenType::Invitation); // no revocation
 ```
 
+## Auth — session expiry: `SessionInterface::getExpiresAt()` (2.12)
+
+`SessionInterface` carries the expiry, so a consumer reads it through the contract and never from an implementation class:
+
+```php
+use JardisSupport\Contract\Auth\SessionInterface;
+
+$expiresAt = $session->getExpiresAt(); // ?DateTimeImmutable - null = the session does not expire
+```
+
+This is a new method on a published interface: every `SessionInterface` implementor must add it.
+`jardissupport/auth` v1.7.0 ships the implementation (`Data\Session`).
+
 ## Design Principles
 
 - **One package, all contracts** — single dependency for the entire Jardis ecosystem
