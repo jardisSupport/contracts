@@ -84,6 +84,11 @@ final class AuthServicesContractsTest extends TestCase
                 return 'h';
             }
 
+            public function getExpiresAt(): ?DateTimeImmutable
+            {
+                return null;
+            }
+
             public function isExpired(): bool
             {
                 return false;
@@ -94,6 +99,19 @@ final class AuthServicesContractsTest extends TestCase
                 return [];
             }
         };
+    }
+
+    public function testSessionInterface(): void
+    {
+        ContractShape::assertMethods(SessionInterface::class, [
+            'getSubject' => '(): string',
+            'getTokenHash' => '(): string',
+            'getExpiresAt' => '(): ?DateTimeImmutable',
+            'isExpired' => '(): bool',
+            'getMetadata' => '(): array',
+        ]);
+
+        self::assertNull($this->session()->getExpiresAt());
     }
 
     public function testSessionResultInterface(): void

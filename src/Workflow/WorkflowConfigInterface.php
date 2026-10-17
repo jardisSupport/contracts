@@ -9,6 +9,10 @@ namespace JardisSupport\Contract\Workflow;
  *
  * Provides methods for building workflow configurations with nodes
  * that support conditional branching based on handler results.
+ *
+ * @deprecated 2.12.0 Ersetzt durch jardissupport/workflow 2.0
+ *            (ProcessDefinition/ProcessContext/NodeResult);
+ *            Streichung in contracts 3.0
  */
 interface WorkflowConfigInterface
 {

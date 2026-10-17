@@ -9,6 +9,10 @@ namespace JardisSupport\Contract\Workflow;
  *
  * Provides fluent methods for defining all possible transitions
  * from a workflow node (success, fail, retry, pending, etc.).
+ *
+ * @deprecated 2.12.0 Ersetzt durch jardissupport/workflow 2.0
+ *            (ProcessDefinition/ProcessContext/NodeResult);
+ *            Streichung in contracts 3.0
  */
 interface WorkflowNodeBuilderInterface
 {

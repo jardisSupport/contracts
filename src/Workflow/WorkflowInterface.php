@@ -25,6 +25,10 @@ use Exception;
  * argument and must return a WorkflowResultInterface. The engine stamps the
  * result with the handler's FQCN before appending it to the context's flat
  * execution chain.
+ *
+ * @deprecated 2.12.0 Ersetzt durch jardissupport/workflow 2.0
+ *            (ProcessDefinition/ProcessContext/NodeResult);
+ *            Streichung in contracts 3.0
  */
 interface WorkflowInterface
 {
