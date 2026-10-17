@@ -34,7 +34,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Scheduling` | 5 | Constraint, CronExpression, Schedule(+Violation), ScheduledTask |
 | `Secret` | 2 | Secret resolution + Exception |
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`; `toFields()` flat findings) |
-| `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
+| `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — **deprecated seit 2.12.0, Ersatz `jardissupport/workflow` 2.0** (nur die 7 `Workflow*Interface`; `AggregateResponse` bleibt) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
 **115 contracts** across 18 domains.
 
@@ -356,7 +356,7 @@ This is a new method on a published interface: every `SessionInterface` implemen
 ## Design Principles
 
 - **One package, all contracts** — single dependency for the entire Jardis ecosystem
-- **Only PSR standards at the Kernel level** — PSR-3, PSR-11, PSR-14, PSR-16, PSR-18 + PDO
+- **Only PSR standards at the Kernel level** — PSR-3, PSR-11, PSR-14, PSR-16, PSR-18, PSR-20 (`psr/clock`) + PDO
 - **No implementation code** — interfaces, enums, value objects and exception classes only
 - **Hexagonal Architecture** — contracts define ports, implementations live in adapter/support packages
 

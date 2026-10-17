@@ -15,6 +15,10 @@ namespace JardisSupport\Contract\Workflow;
  * - Named transitions only (onSuccess, onFail, onTimeout, onSkip, onCancel, onEvent, onExit)
  * - Data payload from handler execution
  * - Handler-FQCN stamping by the workflow engine
+ *
+ * @deprecated 2.12.0 Ersetzt durch jardissupport/workflow 2.0
+ *            (ProcessDefinition/ProcessContext/NodeResult);
+ *            Streichung in contracts 3.0
  */
 interface WorkflowResultInterface
 {
