@@ -13,6 +13,10 @@ namespace JardisSupport\Contract\Workflow;
  * entry/final companions and the routing graph.
  *
  * Replaces the prior $result/$callStack tuple returned by Workflow::__invoke().
+ *
+ * @deprecated 2.12.0 Ersetzt durch jardissupport/workflow 2.0
+ *            (ProcessDefinition/ProcessContext/NodeResult);
+ *            Streichung in contracts 3.0
  */
 interface WorkflowContextInterface extends WorkflowChainInterface
 {

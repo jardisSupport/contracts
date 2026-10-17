@@ -17,6 +17,10 @@ namespace JardisSupport\Contract\Workflow;
  * Callers may pass any implementation of this protocol as the run's context;
  * the default {@see WorkflowContextInterface} extends it with opaque mantle
  * slots, and domain-side state objects may implement only this protocol.
+ *
+ * @deprecated 2.12.0 Ersetzt durch jardissupport/workflow 2.0
+ *            (ProcessDefinition/ProcessContext/NodeResult);
+ *            Streichung in contracts 3.0
  */
 interface WorkflowChainInterface
 {
