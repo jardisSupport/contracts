@@ -18,7 +18,7 @@ namespace JardisSupport\Contract\Workflow;
  * the default {@see WorkflowContextInterface} extends it with opaque mantle
  * slots, and domain-side state objects may implement only this protocol.
  *
- * @deprecated 2.12.0 Ersetzt durch jardissupport/workflow 2.0
+ * @deprecated 2.12.0 Ersetzt durch jardissupport/workflow 4.0, Entfernen in contracts 3
  *            (ProcessDefinition/ProcessContext/NodeResult);
  *            Streichung in contracts 3.0
  */
