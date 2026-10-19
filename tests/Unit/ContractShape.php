@@ -19,14 +19,18 @@ final class ContractShape
     /**
      * @param class-string $interface
      * @param array<string, string> $expected method name => "(<params>): <return>"
+     * @param bool $declaredOnly count only methods declared by the interface itself (not inherited, e.g. Throwable)
      */
-    public static function assertMethods(string $interface, array $expected): void
+    public static function assertMethods(string $interface, array $expected, bool $declaredOnly = false): void
     {
         $reflection = new ReflectionClass($interface);
         Assert::assertTrue($reflection->isInterface(), $interface . ' must be an interface');
 
         $actual = [];
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            if ($declaredOnly && $method->getDeclaringClass()->getName() !== $reflection->getName()) {
+                continue;
+            }
             $actual[$method->getName()] = self::signature($method);
         }
 
