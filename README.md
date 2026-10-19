@@ -27,14 +27,14 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `EventListener` | 1 | EventListenerRegistry (paired with PSR-14 EventDispatcher) |
 | `Filesystem` | 6 | Filesystem (Reader/Writer/Service), FileInfo + Exception |
 | `Identity` | 12 | **Deprecated since 2.11** — User/Tenant/Membership/Group/Invitation entity contracts, UserStatus (enum), and the six store ports (User, Tenant, Membership, Group, GroupMember, Invitation) |
-| `Kernel` | 6 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker) |
+| `Kernel` | 9 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker), ConcurrencyConflictExceptionInterface, ValidationExceptionInterface, ReportedFailureExceptionInterface |
 | `Mailer` | 4 | Mailer, MailMessage, MailTransport + Exception |
 | `Messaging` | 10 | Publisher, Consumer, MessageHandler + Exceptions |
 | `Repository` | 6 | Generic CRUD, PkStrategy, Exceptions (Persist, RecordNotFound, UniqueViolation, TransientConflict) |
 | `Scheduling` | 5 | Constraint, CronExpression, Schedule(+Violation), ScheduledTask |
 | `Secret` | 2 | Secret resolution + Exception |
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`; `toFields()` flat findings) |
-| `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — **deprecated seit 2.12.0, Ersatz `jardissupport/workflow` 2.0** (nur die 7 `Workflow*Interface`; `AggregateResponse` bleibt) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
+| `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — **deprecated seit 2.12.0, Ersatz `jardissupport/workflow` 4.0** (nur die 7 `Workflow*Interface`; `AggregateResponse` bleibt) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
 **115 contracts** across 18 domains.
 
@@ -352,6 +352,31 @@ $expiresAt = $session->getExpiresAt(); // ?DateTimeImmutable - null = the sessio
 
 This is a new method on a published interface: every `SessionInterface` implementor must add it.
 `jardissupport/auth` v1.7.0 ships the implementation (`Data\Session`).
+
+## Kernel — exception markers (2.13)
+
+Three marker interfaces let a delivery layer map generated exceptions without importing generated classes. All extend `\Throwable`, like `Filesystem\FilesystemExceptionInterface`.
+
+| Interface (`JardisSupport\Contract\Kernel\`) | Methods | Door maps to |
+|---|---|---|
+| `ConcurrencyConflictExceptionInterface` | `getReason(): string`, `getAggregate(): string`, `getContext(): array<string, mixed>`, `getViolated(): list<string>` | 409 (optimistic write conflict) |
+| `ValidationExceptionInterface` | `getFields(): list<array{field, reason, message, messageKey}>` | 400 (failed input validation of a command) |
+| `ReportedFailureExceptionInterface` | none | keeps its status; the cause was already reported where it arose, so the door does not log it again |
+
+```php
+use JardisSupport\Contract\Kernel\ConcurrencyConflictExceptionInterface;
+use JardisSupport\Contract\Kernel\ValidationExceptionInterface;
+
+try {
+    $result = $handler($command);
+} catch (ValidationExceptionInterface $e) {
+    $fields = $e->getFields();   // -> 400
+} catch (ConcurrencyConflictExceptionInterface $e) {
+    $reason = $e->getReason();   // -> 409
+}
+```
+
+Additive: new interfaces, no change to published ones. The seven deprecated `Workflow*Interface` now name `jardissupport/workflow` 4.0 as replacement and removal in contracts 3.
 
 ## Design Principles
 
