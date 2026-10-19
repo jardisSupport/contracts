@@ -27,7 +27,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `EventListener` | 1 | EventListenerRegistry (paired with PSR-14 EventDispatcher) |
 | `Filesystem` | 6 | Filesystem (Reader/Writer/Service), FileInfo + Exception |
 | `Identity` | 12 | **Deprecated since 2.11** — User/Tenant/Membership/Group/Invitation entity contracts, UserStatus (enum), and the six store ports (User, Tenant, Membership, Group, GroupMember, Invitation) |
-| `Kernel` | 8 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker), ConcurrencyConflictExceptionInterface, ValidationExceptionInterface |
+| `Kernel` | 9 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker), ConcurrencyConflictExceptionInterface, ValidationExceptionInterface, ReportedFailureExceptionInterface |
 | `Mailer` | 4 | Mailer, MailMessage, MailTransport + Exception |
 | `Messaging` | 10 | Publisher, Consumer, MessageHandler + Exceptions |
 | `Repository` | 6 | Generic CRUD, PkStrategy, Exceptions (Persist, RecordNotFound, UniqueViolation, TransientConflict) |
@@ -355,12 +355,13 @@ This is a new method on a published interface: every `SessionInterface` implemen
 
 ## Kernel — exception markers (2.13)
 
-Two marker interfaces let a delivery layer map generated exceptions without importing generated classes. Both extend `\Throwable`, like `Filesystem\FilesystemExceptionInterface`.
+Three marker interfaces let a delivery layer map generated exceptions without importing generated classes. All extend `\Throwable`, like `Filesystem\FilesystemExceptionInterface`.
 
 | Interface (`JardisSupport\Contract\Kernel\`) | Methods | Door maps to |
 |---|---|---|
 | `ConcurrencyConflictExceptionInterface` | `getReason(): string`, `getAggregate(): string`, `getContext(): array<string, mixed>`, `getViolated(): list<string>` | 409 (optimistic write conflict) |
 | `ValidationExceptionInterface` | `getFields(): list<array{field, reason, message, messageKey}>` | 400 (failed input validation of a command) |
+| `ReportedFailureExceptionInterface` | none | keeps its status; the cause was already reported where it arose, so the door does not log it again |
 
 ```php
 use JardisSupport\Contract\Kernel\ConcurrencyConflictExceptionInterface;
