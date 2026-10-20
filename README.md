@@ -27,7 +27,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `EventListener` | 1 | EventListenerRegistry (paired with PSR-14 EventDispatcher) |
 | `Filesystem` | 6 | Filesystem (Reader/Writer/Service), FileInfo + Exception |
 | `Identity` | 12 | **Deprecated since 2.11** — User/Tenant/Membership/Group/Invitation entity contracts, UserStatus (enum), and the six store ports (User, Tenant, Membership, Group, GroupMember, Invitation) |
-| `Kernel` | 10 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker), ConcurrencyConflictExceptionInterface, ValidationExceptionInterface, ReportedFailureExceptionInterface, OutcomeInterface |
+| `Kernel` | 11 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker), ConcurrencyConflictExceptionInterface, ValidationExceptionInterface, ReportedFailureExceptionInterface, OutcomeInterface, AnswerableOutcomeInterface |
 | `Mailer` | 4 | Mailer, MailMessage, MailTransport + Exception |
 | `Messaging` | 10 | Publisher, Consumer, MessageHandler + Exceptions |
 | `Repository` | 6 | Generic CRUD, PkStrategy, Exceptions (Persist, RecordNotFound, UniqueViolation, TransientConflict) |
@@ -36,7 +36,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`; `toFields()` flat findings) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — **deprecated seit 2.12.0, Ersatz `jardissupport/workflow` 4.0** (nur die 7 `Workflow*Interface`; `AggregateResponse` bleibt) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**120 contracts** across 18 domains.
+**121 contracts** across 18 domains.
 
 ---
 
@@ -113,6 +113,15 @@ simply stays inactive.
 transaction bracket commits or rolls back) meet without knowing each other, and without any caller
 comparing status numbers. Payload, events and errors are deliberately not part of it. New, additive
 interface beside the existing ones - no method was added to a published interface.
+
+### `AnswerableOutcomeInterface` (additive)
+
+`JardisSupport\Contract\Kernel\AnswerableOutcomeInterface extends OutcomeInterface` adds what the
+answer of a use case is built from: `response(): object`, `errors(): list<string>`,
+`events(): list<object>`, `messageKey(): ?string` and `context(): array` (the plain data of a reject).
+`jardissupport/workflow` (`ProcessOutcome`) implements it, `jardissupport/response` (the answer
+closures) reads it - neither knows the other. A separate interface, because a method added to
+`OutcomeInterface` would break every implementor.
 
 ### `GeneratedContextInterface` marker
 
