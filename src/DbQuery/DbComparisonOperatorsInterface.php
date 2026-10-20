@@ -238,14 +238,16 @@ interface DbComparisonOperatorsInterface
      * $query->where('name')->like('John%');      // Starts with 'John'
      * $query->where('email')->like('%@gmail.com'); // Ends with '@gmail.com'
      * $query->where('code')->like('A_C');        // A, any char, C
+     * $query->where('name')->like($likePattern); // literal term via LikePatternInterface
      * ```
      *
-     * @param string|int|float|bool|null|DbQueryBuilderInterface|ExpressionInterface $value
+     * @param string|int|float|bool|null|DbQueryBuilderInterface|ExpressionInterface|LikePatternInterface $value
      *        The value to compare. Can be:
      *        - Scalar value (string, int, float, bool)
      *        - null
      *        - DbQueryBuilderInterface (subquery)
      *        - ExpressionInterface (raw SQL expression)
+     *        - LikePatternInterface (literal search term, wildcards escaped)
      * @param string|null $closeBracket Optional closing bracket(s) to append to the condition
      * @return DbQueryBuilderInterface|DbUpdateBuilderInterface|DbDeleteBuilderInterface The builder for method chaining
      */
@@ -262,12 +264,13 @@ interface DbComparisonOperatorsInterface
      * $query->where('email')->notLike('%@spam.com');
      * ```
      *
-     * @param string|int|float|bool|null|DbQueryBuilderInterface|ExpressionInterface $value
+     * @param string|int|float|bool|null|DbQueryBuilderInterface|ExpressionInterface|LikePatternInterface $value
      *        The value to compare. Can be:
      *        - Scalar value (string, int, float, bool)
      *        - null
      *        - DbQueryBuilderInterface (subquery)
      *        - ExpressionInterface (raw SQL expression)
+     *        - LikePatternInterface (literal search term, wildcards escaped)
      * @param string|null $closeBracket Optional closing bracket(s) to append to the condition
      * @return DbQueryBuilderInterface|DbUpdateBuilderInterface|DbDeleteBuilderInterface The builder for method chaining
      */
