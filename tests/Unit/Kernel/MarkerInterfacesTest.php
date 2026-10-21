@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JardisSupport\Contract\Tests\Unit\Kernel;
 
+use JardisSupport\Contract\Kernel\AccessDeniedExceptionInterface;
 use JardisSupport\Contract\Kernel\ConcurrencyConflictExceptionInterface;
 use JardisSupport\Contract\Kernel\ReportedFailureExceptionInterface;
 use JardisSupport\Contract\Kernel\ValidationExceptionInterface;
@@ -98,6 +99,38 @@ final class MarkerInterfacesTest extends TestCase
         } catch (\Throwable $caught) {
             self::assertInstanceOf(ReportedFailureExceptionInterface::class, $caught);
             self::assertSame('already logged', $caught->getMessage());
+        }
+    }
+
+    public function testAccessDeniedCarriesMessageKeyAndContextAsData(): void
+    {
+        ContractShape::assertMethods(AccessDeniedExceptionInterface::class, [
+            'getMessageKey' => '(): string',
+            'getContext' => '(): array',
+        ], true);
+
+        self::assertTrue(
+            (new \ReflectionClass(AccessDeniedExceptionInterface::class))->isSubclassOf(\Throwable::class)
+        );
+
+        $exception = new class ('denied') extends \RuntimeException implements AccessDeniedExceptionInterface {
+            public function getMessageKey(): string
+            {
+                return 'test.key';
+            }
+
+            public function getContext(): array
+            {
+                return ['right' => 'a:b'];
+            }
+        };
+
+        try {
+            throw $exception;
+        } catch (\Throwable $caught) {
+            self::assertInstanceOf(AccessDeniedExceptionInterface::class, $caught);
+            self::assertSame('test.key', $caught->getMessageKey());
+            self::assertSame(['right' => 'a:b'], $caught->getContext());
         }
     }
 }
