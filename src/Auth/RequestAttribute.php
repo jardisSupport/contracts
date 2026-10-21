@@ -32,6 +32,13 @@ final class RequestAttribute
      */
     public const ROLE = 'jardisRole';
 
+    /**
+     * Attribute holding the rights of the authenticated subject (list<string>). Set from the session claim
+     * `SessionClaim::RIGHTS`, and only when the access token carries that claim with a non-empty list;
+     * otherwise the attribute is absent (never `[]`, never null). Pattern: `ROLE`.
+     */
+    public const RIGHTS = 'jardisRights';
+
     private function __construct()
     {
     }

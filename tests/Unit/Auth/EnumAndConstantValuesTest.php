@@ -37,6 +37,14 @@ final class EnumAndConstantValuesTest extends TestCase
         self::assertSame('jardisSubjectId', RequestAttribute::SUBJECT_ID);
         self::assertSame('jardisSession', RequestAttribute::SESSION);
         self::assertSame('jardisRole', RequestAttribute::ROLE);
+        self::assertSame('jardisRights', RequestAttribute::RIGHTS);
+    }
+
+    public function testRightsClaimAndAttributeValues(): void
+    {
+        self::assertSame('rights', SessionClaim::RIGHTS);
+        self::assertSame('jardisRights', RequestAttribute::RIGHTS);
+        self::assertNotSame(SessionClaim::RIGHTS, RequestAttribute::RIGHTS);
     }
 
     public function testRoleAttributeIsDistinctFromSessionClaim(): void

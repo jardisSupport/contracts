@@ -22,6 +22,13 @@ final class SessionClaim
     /** Claim holding the role of the subject within the tenant (string). */
     public const ROLE = 'role';
 
+    /**
+     * Claim holding the rights of the subject's role within the tenant of the session (list<string>).
+     * Each element is `resource:action`, `resource:*` or `*`. An empty list and a missing claim mean the
+     * same: no rights. Pattern: `ROLE`.
+     */
+    public const RIGHTS = 'rights';
+
     private function __construct()
     {
     }
