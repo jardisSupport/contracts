@@ -10,6 +10,8 @@ namespace JardisSupport\Contract\Auth;
  * Consumers: the generated `{Domain}Rights` of the Builder implements it, and the follow-up
  * "role management" reads only this interface to list the assignable rights. The package knows no
  * right of its own; the entries are data of the implementing domain.
+ *
+ * @deprecated 2.17.0 Recht je Route: `RequireRight` in `jardiscore/app` 3.0.0; Entfernung in contracts 3
  */
 interface RightsCatalogInterface
 {
