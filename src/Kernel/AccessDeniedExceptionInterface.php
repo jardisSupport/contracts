@@ -13,6 +13,8 @@ use Throwable;
  * required right or is of a kind that is not allowed. A delivery layer catches the interface, not the
  * generated class, and maps it to HTTP 403. The message key travels as data of the exception; this
  * package defines no key value.
+ *
+ * @deprecated 2.17.0 Recht je Route: `RequireRight` in `jardiscore/app` 3.0.0; Entfernung in contracts 3
  */
 interface AccessDeniedExceptionInterface extends Throwable
 {
