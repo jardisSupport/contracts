@@ -20,7 +20,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Auth` | 25 | UserLookup, CredentialRecord, SessionClaim (login lookup + session claim names, incl. `RIGHTS`), AuthResult, TenantAwareAuthResult, SessionAwareAuthResult, RequestAttribute (subject/subject-id/tenant/session/rights attribute names), Authenticator, Credential(+Type), Guard, HashedToken, PasswordHasher, Session, TokenStore(+Type); since 2.11: AuthServices, SessionManager, TokenIssuer, TokenRedeemer, SessionResult, IssuedToken, RoleAwareAuthResult; rights (additive): RightsAwareAuthResult, RightsCatalog (deprecated since 2.17.0) |
 | `ClassVersion` | 2 | Versioned class resolution |
 | `Connection` | 1 | Generic connection abstraction |
-| `Data` | 3 | Hydration, Identity, FieldMapper |
+| `Data` | 4 | Hydration, Identity, FieldMapper, Absent (enum: field not delivered in a partial write) |
 | `DbConnection` | 4 | ConnectionPool, DbConnection, DatabaseConfig, Savepoint (additive: nested transaction brackets) |
 | `DbQuery` | 18 | Query Builder, Conditions, Joins, Expressions, Results |
 | `DotEnv` | 1 | Environment variable loading |
@@ -36,7 +36,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`; `toFields()` flat findings) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — **deprecated seit 2.12.0, Ersatz `jardissupport/workflow` 4.0** (nur die 7 `Workflow*Interface`; `AggregateResponse` bleibt) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**121 contracts** across 18 domains.
+**122 contracts** across 18 domains.
 
 ---
 
@@ -428,6 +428,35 @@ try {
 Additive: new interfaces, no change to published ones. The seven deprecated `Workflow*Interface` now name `jardissupport/workflow` 4.0 as replacement and removal in contracts 3.
 
 **2.17.0 (deprecation only):** `RightsCatalogInterface` and `AccessDeniedExceptionInterface` carry `@deprecated 2.17.0` (replacement: `RequireRight` in `jardiscore/app` 3.0.0). No signature changed, nothing removed — removal is reserved for contracts 3.
+
+## Data — `Absent`: not delivered in a partial write (2.18)
+
+`Data\Absent` is the third state of a write payload next to a value and `null`: the caller did not deliver the field. `null` is a delivered value and clears a nullable field, `Absent::Value` leaves the field as it is.
+
+```php
+use JardisSupport\Contract\Data\Absent;
+
+final readonly class ChangeNote
+{
+    public function __construct(
+        public string $number,
+        public string|null|Absent $note = Absent::Value,
+    ) {
+    }
+}
+```
+
+| Payload value | Meaning | `jardissupport/validation` (from 1.8) | `FieldMapper::toColumns` in `jardissupport/data` (from 1.5) |
+|---|---|---|---|
+| `Absent::Value` | not delivered | field skipped | key omitted |
+| `null` | delivered, clears | runs through the presence rule | key kept as `null` |
+| any other value | delivered | validated | key kept |
+
+A pure enum on purpose: a backed case would be written as its value by the hydration of `BackedEnum` properties. `Absent` is the state of a payload, not a validator concept; a validator that reports a missing value is `Validation\MissingValueValidatorInterface`.
+
+Additive: a new enum, no change to published contracts.
+
+---
 
 ## Design Principles
 
