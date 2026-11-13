@@ -26,9 +26,10 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `DotEnv` | 1 | Environment variable loading |
 | `EventListener` | 1 | EventListenerRegistry (paired with PSR-14 EventDispatcher) |
 | `Filesystem` | 6 | Filesystem (Reader/Writer/Service), FileInfo + Exception |
+| `Http` | 1 | HttpService (since 2.19: ready-made get/delete/head/post/put/patch for domain code, PSR-7 responses) |
 | `Identity` | 12 | **Deprecated since 2.11** — User/Tenant/Membership/Group/Invitation entity contracts, UserStatus (enum), and the six store ports (User, Tenant, Membership, Group, GroupMember, Invitation) |
-| `Kernel` | 12 | DomainKernel, ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker), ConcurrencyConflictExceptionInterface, ValidationExceptionInterface, AccessDeniedExceptionInterface (deprecated since 2.17.0), ReportedFailureExceptionInterface, OutcomeInterface, AnswerableOutcomeInterface |
-| `Mailer` | 4 | Mailer, MailMessage, MailTransport + Exception |
+| `Kernel` | 12 | DomainKernel (15 accessors, since 2.19 incl. `http()` and `mail()`), ContextResponse, DomainResponse, EventScope, ResponseStatus, GeneratedContextInterface (marker), ConcurrencyConflictExceptionInterface, ValidationExceptionInterface, AccessDeniedExceptionInterface (deprecated since 2.17.0), ReportedFailureExceptionInterface, OutcomeInterface, AnswerableOutcomeInterface |
+| `Mailer` | 5 | Mailer, MailMessage, MailTransport + Exception; since 2.19: MailService (`sendMail()`) |
 | `Messaging` | 10 | Publisher, Consumer, MessageHandler + Exceptions |
 | `Repository` | 6 | Generic CRUD, PkStrategy, Exceptions (Persist, RecordNotFound, UniqueViolation, TransientConflict) |
 | `Scheduling` | 5 | Constraint, CronExpression, Schedule(+Violation), ScheduledTask |
@@ -36,7 +37,7 @@ This package provides all interface contracts for the Jardis ecosystem in a sing
 | `Validation` | 4 | Validator, ValueValidator, MissingValueValidator (marker), ValidationResult (errors + `kinds` tree: `missing`\|`invalid`; `toFields()` flat findings) |
 | `Workflow` | 8 | Workflow engine + orchestration (Workflow, Builder, NodeBuilder, Config, Context, Result, Chain, AggregateResponse) — **deprecated seit 2.12.0, Ersatz `jardissupport/workflow` 4.0** (nur die 7 `Workflow*Interface`; `AggregateResponse` bleibt) — 7 named transitions: `onSuccess`, `onFail`, `onTimeout`, `onSkip`, `onCancel`, `onEvent`, `onExit` |
 
-**122 contracts** across 18 domains.
+**127 contracts** across 19 domains.
 
 ---
 
@@ -61,6 +62,7 @@ JardisSupport\Contract\
 ├── DotEnv\
 ├── EventListener\
 ├── Filesystem\
+├── Http\
 ├── Identity\
 ├── Kernel\
 ├── Mailer\
@@ -136,6 +138,56 @@ It took over the detection role of `BoundedContextInterface`, which was
 removed from this package in the Kernel-Entkopplung (2026-07) together with
 the `jardiscore/kernel` `BoundedContext` base class it referred to. Generated
 contexts implement this marker instead of extending a package class.
+
+---
+
+## Kernel — HTTP and mail service: `http()` and `mail()` (since 2.19)
+
+> **BREAKING for implementors of `DomainKernelInterface`: they must add `http()` and `mail()`.**
+> Same pattern as `auth()` (2.11): new accessors on the kernel interface, minor release, every
+> known implementor (`DomainKernel`, test doubles) moves along. `httpClient()` and `mailer()` are
+> unchanged.
+
+Two new service contracts let domain code reach HTTP and mail through the kernel without importing
+any `JardisAdapter\*` class:
+
+- `Http\HttpServiceInterface` — `get/delete/head(string $uri, array $headers = [])` and
+  `post/put/patch(string $uri, array $data = [], array $headers = [])`, all returning the PSR-7
+  `ResponseInterface`. `$data` is sent as a JSON body. A 4xx/5xx status comes back as a response;
+  only a failed transport throws `Psr\Http\Client\ClientExceptionInterface`.
+- `Mailer\MailServiceInterface` — `sendMail(string|array $to, string $subject, ?string $text = null,
+  ?string $html = null, array $options = []): void`. Neither text nor HTML throws
+  `\InvalidArgumentException`; a failed transfer throws `MailerExceptionInterface`.
+
+Both accessors are nullable: `null` = not configured.
+
+```php
+use JardisSupport\Contract\Kernel\DomainKernelInterface;
+
+final class NotifyCustomer
+{
+    public function __construct(private readonly DomainKernelInterface $kernel)
+    {
+    }
+
+    public function __invoke(string $email, string $orderNo): void
+    {
+        $response = $this->kernel->http()?->post('https://api.example.com/orders/' . $orderNo . '/notify');
+        if ($response !== null && $response->getStatusCode() >= 400) {
+            return;
+        }
+
+        $this->kernel->mail()?->sendMail(
+            $email,
+            'Order ' . $orderNo,
+            text: 'Your order ' . $orderNo . ' is on its way.',
+        );
+    }
+}
+```
+
+`composer.json` now lists `psr/http-message` (`^1.0 || ^2.0`) explicitly in `require` (before it
+arrived transitively).
 
 ---
 
