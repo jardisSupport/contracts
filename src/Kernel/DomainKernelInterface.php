@@ -8,6 +8,8 @@ use JardisSupport\Contract\Auth\AuthServicesInterface;
 use JardisSupport\Contract\DbConnection\ConnectionPoolInterface;
 use JardisSupport\Contract\EventListener\EventListenerRegistryInterface;
 use JardisSupport\Contract\Filesystem\FilesystemServiceInterface;
+use JardisSupport\Contract\Http\HttpServiceInterface;
+use JardisSupport\Contract\Mailer\MailServiceInterface;
 use JardisSupport\Contract\Mailer\MailerInterface;
 use JardisSupport\Contract\Messaging\MessagingServiceInterface;
 use PDO;
@@ -138,4 +140,24 @@ interface DomainKernelInterface
      * @return AuthServicesInterface|null Auth services or null if the app wires no `auth`
      */
     public function auth(): ?AuthServicesInterface;
+
+    /**
+     * Gets the HTTP service with ready-made calls (get, post, …) for domain code.
+     *
+     * Complements `httpClient()` (PSR-18, any request): domain code needs no
+     * adapter import for the common verbs.
+     *
+     * @return HttpServiceInterface|null HTTP service or null if not configured
+     */
+    public function http(): ?HttpServiceInterface;
+
+    /**
+     * Gets the mail service with the ready-made `sendMail()` call for domain code.
+     *
+     * Complements `mailer()` (fully composed messages): domain code builds no
+     * message object and needs no adapter import.
+     *
+     * @return MailServiceInterface|null Mail service or null if not configured
+     */
+    public function mail(): ?MailServiceInterface;
 }
