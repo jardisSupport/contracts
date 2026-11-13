@@ -186,6 +186,9 @@ final class NotifyCustomer
 }
 ```
 
+`composer.json` declares `"conflict": {"jardiscore/kernel": "<2.9"}`: a kernel older than 2.9 does
+not implement `http()`/`mail()` and would fatal against this interface (see `jardiscore/kernel` 2.9.0).
+
 `composer.json` now lists `psr/http-message` (`^1.0 || ^2.0`) explicitly in `require` (before it
 arrived transitively).
 
