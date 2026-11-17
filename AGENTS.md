@@ -1,6 +1,6 @@
 # jardissupport/contracts
 
-All Jardis interface contracts in one package — ports for Auth, ClassVersion, Connection, Data, DbConnection, DbQuery, DotEnv, EventListener, Filesystem, Http, Identity, Kernel, Mailer, Messaging, Repository, Scheduling, Secret, Validation and Workflow (127 contracts across 19 namespaces). Interfaces, enums, `final readonly` value objects, exception classes and two constants holders (`Auth\RequestAttribute`, `Auth\SessionClaim`) only — no implementation code.
+All Jardis interface contracts in one package — ports for Auth, ClassVersion, Connection, Data, DbConnection, DbQuery, DotEnv, EventListener, Filesystem, Http, Identity, Kernel, Mailer, Messaging, Repository, Scheduling, Secret, Validation and Workflow (130 contracts across 19 namespaces). Interfaces, enums, `final readonly` value objects, exception classes and three constants holders (`Auth\RequestAttribute`, `Auth\SessionClaim`, `Auth\SeeAllRight`) only — no implementation code.
 
 ## Usage essentials
 

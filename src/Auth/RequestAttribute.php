@@ -39,6 +39,26 @@ final class RequestAttribute
      */
     public const RIGHTS = 'jardisRights';
 
+    /**
+     * Attribute holding the ids of the groups of the authenticated subject, including the personal group
+     * (list<int>). Set only when the subject has at least one group; otherwise the attribute is absent
+     * (never `[]`, never null). Pattern: `RIGHTS`.
+     */
+    public const GROUPS = 'jardisGroups';
+
+    /**
+     * Attribute holding the id of the personal group of the authenticated subject (int). Set only when the
+     * subject has a personal group; otherwise the attribute is absent (never null). Pattern: `RIGHTS`.
+     */
+    public const PERSONAL_GROUP = 'jardisPersonalGroup';
+
+    /**
+     * Attribute holding the resolved share targets of a request (array<int, string>): group id => level word
+     * (`view`, `edit` or `all`), or `false` if the target could not be resolved. Absent when the request
+     * names no share targets (never `[]`, never null). Pattern: `RIGHTS`.
+     */
+    public const SHARE_TARGETS = 'jardisShareTargets';
+
     private function __construct()
     {
     }
