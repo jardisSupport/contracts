@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JardisSupport\Contract\Tests\Unit\Auth;
 
 use JardisSupport\Contract\Auth\RequestAttribute;
+use JardisSupport\Contract\Auth\SeeAllRight;
 use JardisSupport\Contract\Auth\SessionClaim;
 use JardisSupport\Contract\Auth\TokenType;
 use PHPUnit\Framework\TestCase;
@@ -38,6 +39,35 @@ final class EnumAndConstantValuesTest extends TestCase
         self::assertSame('jardisSession', RequestAttribute::SESSION);
         self::assertSame('jardisRole', RequestAttribute::ROLE);
         self::assertSame('jardisRights', RequestAttribute::RIGHTS);
+    }
+
+    public function testGroupRequestAttributeNames(): void
+    {
+        self::assertSame('jardisGroups', RequestAttribute::GROUPS);
+        self::assertSame('jardisPersonalGroup', RequestAttribute::PERSONAL_GROUP);
+        self::assertSame('jardisShareTargets', RequestAttribute::SHARE_TARGETS);
+    }
+
+    public function testSeeAllRightResourceIsPinned(): void
+    {
+        self::assertSame('seeAll', SeeAllRight::RESOURCE);
+    }
+
+    public function testSeeAllRightResourceHasNoDotAndNoColon(): void
+    {
+        self::assertStringNotContainsString('.', SeeAllRight::RESOURCE);
+        self::assertStringNotContainsString(':', SeeAllRight::RESOURCE);
+    }
+
+    public function testSeeAllEntrySplitsIntoExactlyTwoParts(): void
+    {
+        $entry = SeeAllRight::RESOURCE . ':' . 'sales.order:read';
+
+        $parts = explode(':', $entry, 2);
+
+        self::assertCount(2, $parts);
+        self::assertSame(SeeAllRight::RESOURCE, $parts[0]);
+        self::assertSame('sales.order:read', $parts[1]);
     }
 
     public function testRightsClaimAndAttributeValues(): void
