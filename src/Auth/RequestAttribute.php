@@ -59,6 +59,13 @@ final class RequestAttribute
      */
     public const SHARE_TARGETS = 'jardisShareTargets';
 
+    /**
+     * Attribute holding the fallback groups of a request without a personal group (array<int, int>): information
+     * kind => id of the fallback group of that kind. Set only when the request has no personal group and at least
+     * one kind has a fallback group; otherwise the attribute is absent (never `[]`, never null). Pattern: `RIGHTS`.
+     */
+    public const FALLBACK_GROUPS = 'jardisFallbackGroups';
+
     private function __construct()
     {
     }

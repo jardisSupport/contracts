@@ -46,6 +46,7 @@ final class EnumAndConstantValuesTest extends TestCase
         self::assertSame('jardisGroups', RequestAttribute::GROUPS);
         self::assertSame('jardisPersonalGroup', RequestAttribute::PERSONAL_GROUP);
         self::assertSame('jardisShareTargets', RequestAttribute::SHARE_TARGETS);
+        self::assertSame('jardisFallbackGroups', RequestAttribute::FALLBACK_GROUPS);
     }
 
     public function testSeeAllRightResourceIsPinned(): void
